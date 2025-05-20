@@ -1,0 +1,14 @@
+{
+  "name": "proyecto-musical",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:back\" \"npm run dev:front\"",
+    "dev:back": "npm run dev --prefix Backend",
+    "dev:front": "npm run dev --prefix Frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10"
+  }
+}
