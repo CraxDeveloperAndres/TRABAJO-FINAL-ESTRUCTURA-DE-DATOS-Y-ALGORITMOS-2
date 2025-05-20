@@ -13,7 +13,23 @@ const verCola = (req, res) => {
   res.json({ cola: queue.toArray() });
 };
 
+const agregarACola = (req, res) => {
+  const { cancion } = req.body;
+  
+  if (!cancion) {
+    return res.status(400).json({ msg: 'Datos de canción requeridos' });
+  }
+  
+  queue.enqueue(cancion);
+  res.status(201).json({ 
+    msg: 'Canción agregada a la cola con éxito', 
+    cancion, 
+    cola: queue.toArray() 
+  });
+};
+
 module.exports = {
   escucharSiguiente,
-  verCola
+  verCola,
+  agregarACola
 };
