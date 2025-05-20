@@ -1,27 +1,18 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const { cargarCanciones, cancionActual, siguienteCancion, cancionAnterior } = require('../controllers/player.controller');
 
-const {
-  playSong,
-  pauseSong,
-  stopSong,
-  nextSong,
-  previousSong
-} = require('../controllers/player.controller');
+const router = Router();
 
-// Reproducir canción
-router.post('/play', playSong);
+// Cargar lista de canciones al reproductor
+router.post('/load', cargarCanciones);
 
-// Pausar canción
-router.post('/pause', pauseSong);
+// Obtener la canción actual
+router.get('/current', cancionActual);
 
-// Detener canción
-router.post('/stop', stopSong);
+// Reproducir siguiente canción
+router.get('/next', siguienteCancion);
 
-// Canción siguiente
-router.post('/next', nextSong);
-
-// Canción anterior
-router.post('/previous', previousSong);
+// Reproducir canción anterior
+router.get('/prev', cancionAnterior);
 
 module.exports = router;

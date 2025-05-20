@@ -1,10 +1,12 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const { escucharSiguiente, verCola } = require('../controllers/queue.controller');
 
-const { getQueue, addToQueue, removeFromQueue } = require('../controllers/queue.controller');
+const router = Router();
 
-router.get('/', getQueue);             // debe ser función
-router.post('/', addToQueue);          // debe ser función
-router.delete('/:id', removeFromQueue);// debe ser función
+// Obtener toda la cola de canciones
+router.get('/', verCola);
+
+// Escuchar la siguiente canción (dequeue)
+router.get('/next', escucharSiguiente);
 
 module.exports = router;

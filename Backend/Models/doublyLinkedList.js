@@ -1,8 +1,8 @@
 class Node {
   constructor(data) {
     this.data = data;
-    this.prev = null;
     this.next = null;
+    this.prev = null;
   }
 }
 
@@ -12,59 +12,43 @@ class DoublyLinkedList {
     this.tail = null;
   }
 
-  append(data) {
+  add(data) {
     const newNode = new Node(data);
-
     if (!this.head) {
       this.head = newNode;
       this.tail = newNode;
       return;
     }
-
     this.tail.next = newNode;
     newNode.prev = this.tail;
     this.tail = newNode;
   }
 
-  remove(data) {
+  toArray() {
+    const arr = [];
     let current = this.head;
-
     while (current) {
-      if (current.data === data) {
-        // Si es el primer nodo
-        if (!current.prev) {
-          this.head = current.next;
-          if (this.head) this.head.prev = null;
-          else this.tail = null; // lista quedó vacía
-        }
-        // Si es el último nodo
-        else if (!current.next) {
-          this.tail = current.prev;
-          this.tail.next = null;
-        }
-        // Si está en el medio
-        else {
-          current.prev.next = current.next;
-          current.next.prev = current.prev;
-        }
-
-        return true; // nodo eliminado
-      }
-
+      arr.push(current.data);
       current = current.next;
     }
-
-    return false; // no se encontró el dato
+    return arr;
   }
 
-  toArray() {
-    const result = [];
+  delete(id) {
     let current = this.head;
     while (current) {
-      result.push(current.data);
+      if (current.data.id === id) {
+        if (current.prev) current.prev.next = current.next;
+        else this.head = current.next;
+
+        if (current.next) current.next.prev = current.prev;
+        else this.tail = current.prev;
+
+        return true;
+      }
       current = current.next;
     }
-    return result;
+    return false;
   }
 }
 

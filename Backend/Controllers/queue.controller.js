@@ -1,35 +1,19 @@
 const Queue = require('../models/queue');
+const queue = new Queue();
 
-const colaCanciones = new Queue();
-
-// Obtener todas las canciones en la cola
-const obtenerCola = (req, res) => {
-  res.json({ cola: colaCanciones.toArray() });
-};
-
-// Reproducir (sacar) la siguiente canción de la cola
-const reproducirSiguienteCancion = (req, res) => {
-  if (colaCanciones.isEmpty()) {
-    return res.status(400).json({ mensaje: 'No hay canciones en la cola' });
-  }
-
-  const cancion = colaCanciones.dequeue();
-  res.json({ mensaje: 'Canción reproducida', cancion });
-};
-
-// Ver la siguiente canción sin sacarla
-const verSiguienteCancion = (req, res) => {
-  const cancion = colaCanciones.peek();
-
+const escucharSiguiente = (req, res) => {
+  const cancion = queue.dequeue();
   if (!cancion) {
-    return res.status(404).json({ mensaje: 'La cola está vacía' });
+    return res.status(404).json({ msg: 'No hay más canciones en la cola' });
   }
+  res.json({ msg: 'Reproduciendo canción', cancion });
+};
 
-  res.json({ siguiente: cancion });
+const verCola = (req, res) => {
+  res.json({ cola: queue.toArray() });
 };
 
 module.exports = {
-  obtenerCola,
-  reproducirSiguienteCancion,
-  verSiguienteCancion
+  escucharSiguiente,
+  verCola
 };

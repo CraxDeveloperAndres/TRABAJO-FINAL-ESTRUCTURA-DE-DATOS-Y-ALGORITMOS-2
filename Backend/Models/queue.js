@@ -1,34 +1,54 @@
-// models/queue.js
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
 
 class Queue {
   constructor() {
-    this.items = [];
+    this.front = null;
+    this.rear = null;
   }
 
-  enqueue(element) {
-    this.items.push(element);
+  enqueue(data) {
+    const newNode = new Node(data);
+
+    if (!this.front) {
+      this.front = this.rear = newNode;
+    } else {
+      this.rear.next = newNode;
+      this.rear = newNode;
+    }
   }
 
   dequeue() {
-    if(this.isEmpty()) return null;
-    return this.items.shift();
+    if (!this.front) return null;
+
+    const removed = this.front;
+    this.front = this.front.next;
+
+    if (!this.front) this.rear = null;
+
+    return removed.data;
   }
 
-  front() {
-    if(this.isEmpty()) return null;
-    return this.items[0];
+  peek() {
+    return this.front ? this.front.data : null;
   }
 
   isEmpty() {
-    return this.items.length === 0;
-  }
-
-  size() {
-    return this.items.length;
+    return !this.front;
   }
 
   toArray() {
-    return [...this.items];
+    const result = [];
+    let current = this.front;
+    while (current) {
+      result.push(current.data);
+      current = current.next;
+    }
+    return result;
   }
 }
 

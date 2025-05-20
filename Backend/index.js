@@ -1,15 +1,18 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/api', require('./routes/index.routes'));
+app.use('/queue', require('./routes/queue.routes'));
+app.use('/player', require('./routes/player.routes'));
+app.use('/doubly', require('./routes/doublyList.routes'));
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000; 
+
 app.listen(PORT, () => {
-  console.log(`🚀 Backend escuchando en http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

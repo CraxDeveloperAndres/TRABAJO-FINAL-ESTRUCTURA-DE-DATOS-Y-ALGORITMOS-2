@@ -1,49 +1,41 @@
-const DoublyLinkedList = require('../models/doublyLinkedList');
+const Player = require('../models/player');
+const player = new Player();
 
-const listaCanciones = new DoublyLinkedList();
-let cancionActual = null;
+const cargarCanciones = (req, res) => {
+  const { canciones } = req.body;
 
-// Simulamos canciones precargadas (puedes mover esto a otro lugar si prefieres)
-listaCanciones.append({ id: 1, nombre: "Canción A" });
-listaCanciones.append({ id: 2, nombre: "Canción B" });
-listaCanciones.append({ id: 3, nombre: "Canción C" });
-
-cancionActual = listaCanciones.head;
-
-// Obtener la canción actual
-const obtenerCancionActual = (req, res) => {
-  if (!cancionActual) {
-    return res.status(404).json({ mensaje: "No hay canción actual" });
+  if (!Array.isArray(canciones) || canciones.length === 0) {
+    return res.status(400).json({ msg: 'Debes enviar una lista de canciones' });
   }
-  res.json({ actual: cancionActual.data });
+
+  player.loadSongs(canciones);
+  res.json({ msg: 'Canciones cargadas', cancionActual: player.currentSong() });
 };
 
-// Pasar a la siguiente canción
+const cancionActual = (req, res) => {
+  const actual = player.currentSong();
+  if (!actual) return res.status(404).json({ msg: 'No hay canción cargada' });
+
+  res.json({ cancion: actual });
+};
+
 const siguienteCancion = (req, res) => {
-  if (cancionActual && cancionActual.next) {
-    cancionActual = cancionActual.next;
-    return res.json({ mensaje: "Siguiente canción", actual: cancionActual.data });
-  }
-  res.status(400).json({ mensaje: "No hay más canciones adelante" });
+  const next = player.next();
+  if (!next) return res.status(404).json({ msg: 'No hay siguiente canción' });
+
+  res.json({ cancion: next });
 };
 
-// Volver a la canción anterior
-const anteriorCancion = (req, res) => {
-  if (cancionActual && cancionActual.prev) {
-    cancionActual = cancionActual.prev;
-    return res.json({ mensaje: "Canción anterior", actual: cancionActual.data });
-  }
-  res.status(400).json({ mensaje: "No hay canciones atrás" });
-};
+const cancionAnterior = (req, res) => {
+  const prev = player.previous();
+  if (!prev) return res.status(404).json({ msg: 'No hay canción anterior' });
 
-// Mostrar toda la lista de canciones (opcional)
-const obtenerListaCompleta = (req, res) => {
-  res.json({ lista: listaCanciones.toArray() });
+  res.json({ cancion: prev });
 };
 
 module.exports = {
-  obtenerCancionActual,
+  cargarCanciones,
+  cancionActual,
   siguienteCancion,
-  anteriorCancion,
-  obtenerListaCompleta
+  cancionAnterior
 };
