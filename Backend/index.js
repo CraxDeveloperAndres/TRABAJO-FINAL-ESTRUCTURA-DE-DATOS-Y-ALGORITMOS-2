@@ -7,11 +7,9 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/queue', require('./routes/queue.routes'));
-app.use('/player', require('./routes/player.routes'));
-app.use('/doubly', require('./routes/doublyList.routes'));
+app.use('/api', require('./Routes/musicRoutes'))
 
-const PORT = process.env.PORT || 4000; 
+const PORT = process.env.PORT || 3000; 
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
