@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const Cancion = require("../Models/Cancion");
 const ListaDoble = require("../Models/Listadoble");
+const { obtenerRecomendaciones } = require('../Models/Grafo');
 const lista = new ListaDoble();
 
 router.get('/songs', (req, res) => {
@@ -15,8 +16,16 @@ router.get('/queue', (req, res) => {
 });
 
 router.post('/addqueue',(req, res) => {
-  const cancion  = req.body;
-  const nodoCancion = lista.agregar(cancion);
+  const {cancion}  = req.body;
+  const cancionEnculada = {...cancion,encolado:true}
+  const nodoCancion = lista.agregar(cancionEnculada);
+
+  res.json(nodoCancion);
+});
+
+router.post('/removequeue',(req, res) => {
+  const {id}  = req.body;
+  const nodoCancion = lista.eliminar(id);
 
   res.json(nodoCancion);
 });
@@ -26,7 +35,7 @@ router.get('/likedsongs',(req, res) => {
   res.json(response);
 });
 
-router.post('/addlike',(req, res) => {
+router.post('/togglelike',(req, res) => {
   const {id}  = req.body;
   const response = Cancion.toggleMeGusta(id);
   res.json(response);
@@ -53,11 +62,15 @@ router.get('/back',(req, res) => {
 
 });
 
-router.get('/graphs',(req, res) => {
+router.get('/graphs', (req, res) => {
+  const cancionActual = lista.obtenerCancionActual();
 
-  const response ="";
+ if (!cancionActual || !cancionActual.id) {
+    return res.status(400).json({ error: 'No hay una canción actual seleccionada.' });
+  }
+  const response = obtenerRecomendaciones(cancionActual.id);
   res.json(response);
-
 });
+
 
 module.exports = router;

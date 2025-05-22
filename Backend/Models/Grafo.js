@@ -1,7 +1,7 @@
 const {
   obtenerTodas,
   obtenerPorId,
-} = require('./ruta/a/tu/moduloCanciones'); // ajusta esta ruta según tu archivo
+} = require("../Models/Cancion"); 
 
 class Nodo {
   constructor(cancion) {
