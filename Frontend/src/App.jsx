@@ -4,12 +4,14 @@ import viteLogo from '/vite.svg';
 import './App.css';
 import { apiService } from './apiServices';
 
+
 function App() {
   const [songs, setSongs] = useState([]);
   const [queueSongs, setQueueSongs] = useState([]);
   const [currentSong, setCurrentSong] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [likedSongs, setLikedSongs] = useState([]);
 
 
   useEffect(() => {
@@ -40,8 +42,58 @@ function App() {
 
       }
     );
+
+     apiService.get(
+    "http://localhost:3000/api/player/current",
+
+    (res)=>{
+
+      console.log(res);
+      setCurrentSong(res.currentSong);
+
+    },
+    (err)=>{
+
+      console.log("no se pudo obtener la cancion actual"+err)
+
+    }
+
+  );
+
+  apiService.get(
+    "http://localhost:3000/api/likes",
+
+    (res)=>{
+      console.log(res);
+      setLikedSongs(res.likedSongs)
+    },
+    (erro)=>{
+      console.log("no se pudo traer las canciones con me gusta")
+    }
+
+  );
+
   }, []);
 
+  const cancionActual = ()=> {
+    
+    apiService.get(
+    "http://localhost:3000/api/player/current",
+
+    (res)=>{
+
+      console.log(res);
+      setCurrentSong(res.currentSong);
+
+    },
+    (err)=>{
+
+      console.log("no se pudo obtener la cancion actual"+err)
+
+    }
+
+  );
+  }
 
 const addToQueue = (song)=>
 {
@@ -60,6 +112,50 @@ const addToQueue = (song)=>
     );
 }
 
+const postNextSongAndGetCurrentSong = () => {
+  apiService.post(
+    "http://localhost:3000/api/player/next",
+    {},
+    (res) => {
+      console.log(res);
+      setQueueSongs(prev => prev.slice(1)); // elimina la primera
+      setCurrentSong(res.currentSong); // actualiza la canción actual
+    },
+    (error) => {
+      console.log("no se pudo hacer la siguiente cancion");
+    }
+  );
+};
+
+const postBeforeSongAndGetCurrentSong = () => {
+  apiService.post(
+    "http://localhost:3000/api/player/previous",
+    {},
+    (res) => {
+      console.log(res);
+      setCurrentSong(res.currentSong); // actualiza la canción actual
+    },
+    (error) => {
+      console.log("no se pudo hacer la canción anterior");
+    }
+  );
+};
+
+const addLikeSong = (song) => {
+  apiService.post(
+    "http://localhost:3000/api/likes/add",
+    {},
+    (res) => {
+      console.log(res.likedSongs); 
+      setLikedSongs(prev => [...prev, res.likedSongs.at(-1)]);
+    },
+    (err) => {
+      console.log("No se pudo agregar la canción a tus me gusta");
+    }
+  );
+};
+
+
 return (
     <div className="app-container">
       <header>
@@ -75,14 +171,17 @@ return (
           <h2>Reproduciendo ahora</h2>
           {currentSong ? (
             <div className="current-song">
-              <h3>{currentSong.titulo}</h3>
-              <p>{currentSong.artista} - {currentSong.album}</p>
-              <p>Duración: {currentSong.duracion}</p>
+              <h3>{currentSong.title}</h3>
+              <p>{currentSong.artist} - {currentSong.album}</p>
+              <p>Duración: {currentSong.duration}</p>
             </div>
           ) : (
             <p>No hay canción reproduciéndose</p>
           )}
-          <button className="control-button">
+           <button onClick={() => {postBeforeSongAndGetCurrentSong();cancionActual();}} className="control-button">
+            Cancion Anterior
+          </button>
+          <button onClick={() => {postNextSongAndGetCurrentSong();cancionActual();}}className="control-button">
             Siguiente canción
           </button>
         </div>
@@ -97,6 +196,7 @@ return (
                     <span className="song-title">{song.title}</span>
                     <span className="song-artist">{song.artist}</span>
                     <span className="song-duration">{song.duration}</span>
+                    <button  className="control-button">Eliminar de la cola</button>
                   </div>
                 </li>
               ))}
@@ -104,6 +204,29 @@ return (
           ) : (
             <p>No hay canciones en la cola</p>
           )}
+        </div>
+
+        <div>
+          <div>
+              <h2>Canciones que te gustan</h2>
+              <ul className="song-list">
+                {likedSongs.map((song) => (
+                  <li key={song.id} className="song-item">
+                    <div className="song-info">
+                      <span className="song-title">{song.title}</span>
+                      <span className="song-artist">{song.artist}</span>
+                      <span className="song-duration">{song.duration}</span>
+                    </div>
+                    <button 
+                      onClick={() => addToQueue(song)} 
+                      className="add-button"
+                    >
+                      eliminar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
         </div>
 
         <div className="library-section">
@@ -127,6 +250,9 @@ return (
                   >
                     Agregar a la cola
                   </button>
+                   <button onClick={()=> addLikeSong(song)}  className="add-button">
+                      Me gusta
+                    </button>
                 </li>
               ))}
             </ul>
@@ -146,6 +272,12 @@ return (
                       className="add-button"
                     >
                       Agregar a la cola
+                    </button>
+                    <button 
+                     
+                      className="add-button"
+                    >
+                      Me gusta
                     </button>
                   </li>
                 ))}
