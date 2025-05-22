@@ -10,5 +10,8 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "morgan": "^1.10.0"
   }
 }

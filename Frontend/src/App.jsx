@@ -141,21 +141,6 @@ const postBeforeSongAndGetCurrentSong = () => {
   );
 };
 
-const addLikeSong = (song) => {
-  apiService.post(
-    "http://localhost:3000/api/likes/add",
-    {},
-    (res) => {
-      console.log(res.likedSongs); 
-      setLikedSongs(prev => [...prev, res.likedSongs.at(-1)]);
-    },
-    (err) => {
-      console.log("No se pudo agregar la canción a tus me gusta");
-    }
-  );
-};
-
-
 return (
     <div className="app-container">
       <header>

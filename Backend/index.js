@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
+const ControllerMusic = require('./Controllers/ControllerMusic')
 
 const app = express();
 
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
-
-// Rutas
-app.use('/api', require('./Routes/musicRoutes'))
+app.use(ControllerMusic);
 
 const PORT = process.env.PORT || 3000; 
 
