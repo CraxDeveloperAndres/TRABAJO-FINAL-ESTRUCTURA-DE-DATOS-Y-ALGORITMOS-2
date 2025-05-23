@@ -21,7 +21,7 @@ function Biblioteca() {
 
   return (
     <section className="h-full w-full relative overflow-hidden">
-        <h1 className="text-3xl font-bold text-white mx-auto text-center">REPO WOW</h1>
+        <h1 className="text-3xl font-bold text-white mx-auto text-center">Reproductor Musical</h1>
       <AnimatePresence mode="wait">
         {!recomendados ? (
           <motion.div

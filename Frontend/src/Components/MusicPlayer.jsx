@@ -180,7 +180,7 @@ function MusicPlayer({
   return (
     <div className="flex items-center justify-between px-6 pt-3 bg-zinc-950 border-t border-zinc-800 w-full h-24">
       {/* Canción actual */}
-      <div className="flex items-center gap-4 w-1/3 bg-red-700">
+      <div className="flex items-center gap-4 w-1/3 border-zinc-800">
         {currentSong && (
           <>
             <img
