@@ -77,8 +77,6 @@ export const MusicPlayerProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentSong == null) return;
-
-    console.log(currentSong.titulo);
     // colocar cancion en player
   }, [currentSong]);
 
