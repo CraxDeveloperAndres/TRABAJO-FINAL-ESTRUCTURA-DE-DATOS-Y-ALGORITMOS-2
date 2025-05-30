@@ -115,7 +115,7 @@ const canciones = [
     id: 9,
     titulo: "DO DO",
     artista: "DAHSOL",
-    image: "https://i.scdn.co/image/ab67616d0000b273a4b5e5c7b6b8d9f2a3c1e8f4",
+    image: "https://i.scdn.co/image/ab67616d00001e022dc18ebdf32bef5e1ffa06de",
     album: "DO DO",
     duracion: 175,
     genero: "K-Pop",

@@ -1,7 +1,4 @@
-const {
-  obtenerTodas,
-  obtenerPorId,
-} = require("../Models/Cancion"); 
+const { obtenerTodas, obtenerPorId } = require("../Models/Cancion");
 
 class Nodo {
   constructor(cancion) {
@@ -17,49 +14,183 @@ class GrafoRecomendaciones {
   }
 
   _inicializar() {
-    const canciones = obtenerTodas();
+    try {
+      const canciones = obtenerTodas();
+      
+      console.log(`Inicializando grafo con ${canciones.length} canciones`);
 
-    // Crear nodos
-    for (const cancion of canciones) {
-      this.nodos.set(cancion.id, new Nodo(cancion));
-    }
-
-    // Conectar nodos con canciones similares (mismo género o artista)
-    for (const cancion of canciones) {
-      const nodo = this.nodos.get(cancion.id);
-      for (const otra of canciones) {
-        if (
-          otra.id !== cancion.id &&
-          (otra.genero === cancion.genero || otra.artista === cancion.artista)
-        ) {
-          nodo.vecinos.add(this.nodos.get(otra.id));
-        }
+      // Crear nodos
+      for (const cancion of canciones) {
+        this.nodos.set(cancion.id, new Nodo(cancion));
       }
+
+      // Conectar nodos con canciones similares
+      for (const cancion of canciones) {
+        const nodo = this.nodos.get(cancion.id);
+        let conexiones = 0;
+        
+        for (const otra of canciones) {
+          if (otra.id !== cancion.id) {
+            // Criterios de similitud más amplios
+            const mismoGenero = otra.genero === cancion.genero;
+            const mismoArtista = otra.artista === cancion.artista;
+            const mismoAlbum = otra.album === cancion.album;
+            const añoSimilar = Math.abs(otra.año - cancion.año) <= 3; // Años cercanos
+            
+            if (mismoGenero || mismoArtista || mismoAlbum || añoSimilar) {
+              nodo.vecinos.add(this.nodos.get(otra.id));
+              conexiones++;
+            }
+          }
+        }
+        
+        console.log(`Canción "${cancion.titulo}" tiene ${conexiones} conexiones`);
+      }
+    } catch (error) {
+      console.error('Error al inicializar el grafo:', error);
     }
   }
 
   obtenerRecomendaciones(id, limite = 5) {
+    console.log(`Buscando recomendaciones para canción ID: ${id}`);
+    
     const nodoInicial = this.nodos.get(id);
-    if (!nodoInicial) return [];
+    if (!nodoInicial) {
+      console.log(`No se encontró la canción con ID: ${id}`);
+      return [];
+    }
 
-    const recomendaciones = new Set();
+    console.log(`Canción base: "${nodoInicial.cancion.titulo}" - ${nodoInicial.cancion.artista}`);
+    console.log(`Vecinos disponibles: ${nodoInicial.vecinos.size}`);
+
+    const recomendaciones = [];
     const visitados = new Set([id]);
 
+    // Algoritmo de recomendación mejorado
+    // 1. Primero priorizar por artista
     for (const vecino of nodoInicial.vecinos) {
-      if (!visitados.has(vecino.cancion.id)) {
-        recomendaciones.add(vecino.cancion);
+      if (!visitados.has(vecino.cancion.id) && 
+          vecino.cancion.artista === nodoInicial.cancion.artista) {
+        recomendaciones.push({
+          ...vecino.cancion,
+          razonRecomendacion: 'Mismo artista'
+        });
         visitados.add(vecino.cancion.id);
-        if (recomendaciones.size >= limite) break;
+        if (recomendaciones.length >= limite) break;
       }
     }
 
-    return [...recomendaciones];
+    // 2. Luego por género si no hemos alcanzado el límite
+    if (recomendaciones.length < limite) {
+      for (const vecino of nodoInicial.vecinos) {
+        if (!visitados.has(vecino.cancion.id) && 
+            vecino.cancion.genero === nodoInicial.cancion.genero) {
+          recomendaciones.push({
+            ...vecino.cancion,
+            razonRecomendacion: 'Mismo género'
+          });
+          visitados.add(vecino.cancion.id);
+          if (recomendaciones.length >= limite) break;
+        }
+      }
+    }
+
+    // 3. Finalmente, otras conexiones
+    if (recomendaciones.length < limite) {
+      for (const vecino of nodoInicial.vecinos) {
+        if (!visitados.has(vecino.cancion.id)) {
+          recomendaciones.push({
+            ...vecino.cancion,
+            razonRecomendacion: 'Conexión indirecta'
+          });
+          visitados.add(vecino.cancion.id);
+          if (recomendaciones.length >= limite) break;
+        }
+      }
+    }
+
+    console.log(`Recomendaciones encontradas: ${recomendaciones.length}`);
+    recomendaciones.forEach((rec, index) => {
+      console.log(`${index + 1}. "${rec.titulo}" - ${rec.artista} (${rec.razonRecomendacion})`);
+    });
+
+    return recomendaciones;
+  }
+
+  // Método para obtener estadísticas del grafo
+  obtenerEstadisticas() {
+    const stats = {
+      totalNodos: this.nodos.size,
+      conexionesPorNodo: {},
+      promedioConexiones: 0
+    };
+
+    let totalConexiones = 0;
+    for (const [id, nodo] of this.nodos) {
+      const numConexiones = nodo.vecinos.size;
+      stats.conexionesPorNodo[id] = {
+        cancion: nodo.cancion.titulo,
+        conexiones: numConexiones
+      };
+      totalConexiones += numConexiones;
+    }
+
+    stats.promedioConexiones = totalConexiones / this.nodos.size;
+    return stats;
+  }
+
+  // Método para reinicializar el grafo (útil si los datos cambian)
+  reinicializar() {
+    this.nodos.clear();
+    this._inicializar();
   }
 }
 
-const grafo = new GrafoRecomendaciones();
+// Crear instancia única del grafo
+let grafo = null;
 
-// Solo exportas esta función
-const obtenerRecomendaciones = (id, limite = 5) => grafo.obtenerRecomendaciones(id, limite);
+const obtenerGrafo = () => {
+  if (!grafo) {
+    grafo = new GrafoRecomendaciones();
+  }
+  return grafo;
+};
 
-module.exports = { obtenerRecomendaciones }; 
+// Función principal de recomendaciones
+const obtenerRecomendaciones = (id, limite = 5) => {
+  try {
+    const grafoInstance = obtenerGrafo();
+    return grafoInstance.obtenerRecomendaciones(id, limite);
+  } catch (error) {
+    console.error('Error al obtener recomendaciones:', error);
+    return [];
+  }
+};
+
+// Función para obtener estadísticas (útil para debugging)
+const obtenerEstadisticasGrafo = () => {
+  try {
+    const grafoInstance = obtenerGrafo();
+    return grafoInstance.obtenerEstadisticas();
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error);
+    return null;
+  }
+};
+
+// Función para forzar reinicialización
+const reinicializarGrafo = () => {
+  try {
+    grafo = new GrafoRecomendaciones();
+    return true;
+  } catch (error) {
+    console.error('Error al reinicializar grafo:', error);
+    return false;
+  }
+};
+
+module.exports = { 
+  obtenerRecomendaciones,
+  obtenerEstadisticasGrafo,
+  reinicializarGrafo
+};
