@@ -11,7 +11,8 @@ export const MusicPlayerProvider = ({ children }) => {
   const [allSongs, setAllSongs] = useState(backService.getAll);
   const [queueList, setQueueList] = useState(backService.getLiked);
   const [likedList, setLikedList] = useState(backService.getQueue);
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'; 
+  console.log(API_URL)
 
   useEffect(() => {
 
