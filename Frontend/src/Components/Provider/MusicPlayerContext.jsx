@@ -11,6 +11,7 @@ export const MusicPlayerProvider = ({ children }) => {
   const [allSongs, setAllSongs] = useState(backService.getAll);
   const [queueList, setQueueList] = useState(backService.getLiked);
   const [likedList, setLikedList] = useState(backService.getQueue);
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   useEffect(() => {
 
@@ -20,7 +21,7 @@ export const MusicPlayerProvider = ({ children }) => {
 
   }, []);
 
-   const getsongs = ()=>{apiService.get('http://localhost:3000/songs',
+   const getsongs = ()=>{apiService.get(`${API_URL}/songs`,
       (res) => {
 
         setAllSongs(res)
@@ -40,7 +41,7 @@ export const MusicPlayerProvider = ({ children }) => {
 
     );}
 
-    const getqueue = ()=>{ apiService.get('http://localhost:3000/queue',
+    const getqueue = ()=>{ apiService.get(`${API_URL}/queue`,
       (res) => {
 
         setQueueList(res)
@@ -56,7 +57,7 @@ export const MusicPlayerProvider = ({ children }) => {
   }
     const getlikedSongs = ()=>{
       
-      apiService.get('http://localhost:3000/likedsongs',
+      apiService.get(`${API_URL}/likedsongs`,
       (res) => {
 
         setLikedList(res)
