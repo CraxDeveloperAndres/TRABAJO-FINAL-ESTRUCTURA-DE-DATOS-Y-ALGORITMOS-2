@@ -10,9 +10,7 @@ function Biblioteca() {
   const [recomendados, setRecomendados] = useState(false);
   const [otherSongs, setOtherSongs] = useState([]);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
-   const API_BASE_URL = process.env.NODE_ENV === 'production'
-      ? 'https://trabajo-final-estructura-de-datos-y-algoritmos-2-janawc1f7.vercel.app'
-      : 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const getGraphos = () => {
     if (!currentSong?.id) {
@@ -23,7 +21,7 @@ function Biblioteca() {
     console.log("Obteniendo recomendaciones para:", currentSong.titulo + "con el id:" + currentSong.id);
 
     apiService.get(
-      `${API_BASE_URL}/graphs`,
+      `${API_URL}/graphs`,
       (res) => {
         console.log(res);
         setOtherSongs(res);

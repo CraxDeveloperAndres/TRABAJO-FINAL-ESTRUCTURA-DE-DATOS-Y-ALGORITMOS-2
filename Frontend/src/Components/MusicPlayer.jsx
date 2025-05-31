@@ -16,7 +16,7 @@ function MusicPlayer({
   const [duration, setDuration] = useState(0);
   const { currentSong, setCurrentSong, getsongs, getlikedSongs, getqueue } = useMusicPlayer();
   const audioRef = useRef(null);
-  const API_URL = import.meta.env.VITE_API_URL || 'https://trabajo-final-estructura-de-datos-y-algoritmos-2-janawc1f7.vercel.app';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 
   const [last, setLast] = useState({ meGusta: "", id: null });
