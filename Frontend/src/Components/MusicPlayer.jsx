@@ -16,6 +16,8 @@ function MusicPlayer({
   const [duration, setDuration] = useState(0);
   const { currentSong, setCurrentSong, getsongs, getlikedSongs, getqueue } = useMusicPlayer();
   const audioRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL || 'https://trabajo-final-estructura-de-datos-y-algoritmos-2-janawc1f7.vercel.app';
+
 
   const [last, setLast] = useState({ meGusta: "", id: null });
   const [urlSong, setUrlSong] = useState("");
@@ -167,7 +169,7 @@ function MusicPlayer({
   };
 
   const toggleLike = (idsong) => {
-    apiService.post('http://localhost:3000/togglelike', { id: idsong },
+    apiService.post( `${API_URL}/togglelike`,{ id: idsong },
       (res) => {
         setCurrentSong(res);
         getsongs();
@@ -180,7 +182,7 @@ function MusicPlayer({
   };
 
   const nextButton = () => {
-    apiService.get('http://localhost:3000/next',
+    apiService.get(`${API_URL}/next`,
       (res) => {
         setCurrentSong(res);
       },
@@ -191,7 +193,7 @@ function MusicPlayer({
   };
 
   const previousButton = () => {
-    apiService.get('http://localhost:3000/back',
+    apiService.get(`${API_URL}/back`,
       (res) => {
         setCurrentSong(res);
       },

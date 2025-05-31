@@ -11,6 +11,8 @@ import { apiService } from "../Services/apiService";
 function SongComponent({ song, showLikeButton = true }) {
 
   const { currentSong, setCurrentSong, getsongs, getlikedSongs, getqueue } = useMusicPlayer();
+  const API_URL = import.meta.env.VITE_API_URL || 'https://trabajo-final-estructura-de-datos-y-algoritmos-2-janawc1f7.vercel.app';
+
 
   const handleImageError = (e) => {
     e.target.onerror = null;
@@ -26,7 +28,7 @@ function SongComponent({ song, showLikeButton = true }) {
 
   const toggleLike = (idsong) => {
 
-    apiService.post('http://localhost:3000/togglelike', { id: idsong },
+    apiService.post(`${API_URL}/togglelike`, { id: idsong },
       (res) => {
 
         song = res;
@@ -44,7 +46,7 @@ function SongComponent({ song, showLikeButton = true }) {
 
   const addqueue = (song) => {
 
-    apiService.post('http://localhost:3000/addqueue', { cancion: song },
+    apiService.post(`${API_URL}/addqueue`, { cancion: song },
       (res) => {
 
         song = res;
@@ -63,7 +65,7 @@ function SongComponent({ song, showLikeButton = true }) {
 
   const removequeue = (idsong) => {
 
-    apiService.post('http://localhost:3000/removequeue', { id: idsong },
+    apiService.post(`${API_URL}/removequeue`,{ id: idsong },
       (res) => {
 
         song = res;
