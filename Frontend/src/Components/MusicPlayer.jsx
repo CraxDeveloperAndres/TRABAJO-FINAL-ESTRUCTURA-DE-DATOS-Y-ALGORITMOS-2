@@ -104,11 +104,6 @@ function MusicPlayer({
       setCurrentTime(audio.currentTime);
     };
 
-    const handleEnded = () => {
-      setIsPlaying(false);
-      onNext(); // Avanzar a la siguiente canción automáticamente
-    };
-
     const handleCanPlay = () => {
       // El audio está listo para reproducir
       if (isPlaying) {
@@ -169,7 +164,7 @@ function MusicPlayer({
   };
 
   const toggleLike = (idsong) => {
-    apiService.post( `${API_URL}/togglelike`,{ id: idsong },
+    apiService.post(`${API_URL}/togglelike`, { id: idsong },
       (res) => {
         setCurrentSong(res);
         getsongs();
@@ -201,6 +196,11 @@ function MusicPlayer({
         console.log("prev button no se pudo hacer el fetch de datos" + erro);
       }
     );
+  };
+
+  const handleEnded = () => {
+    setIsPlaying(false);
+    onNext(); // Avanzar a la siguiente canción automáticamente
   };
 
   // Barra de progreso
@@ -254,6 +254,7 @@ function MusicPlayer({
     };
   }, [isScrubbing]);
 
+
   return (
     <>
       {/* Elemento audio oculto */}
@@ -300,7 +301,7 @@ function MusicPlayer({
             >
               {isPlaying ? <Pause size={28} /> : <Play size={28} />}
             </button>
-            <button onClick={nextButton} className="text-zinc-400 hover:text-white">
+            <button onClick={onNext} className="text-zinc-400 hover:text-white">
               <SkipForward size={20} />
             </button>
           </div>

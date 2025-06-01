@@ -110,18 +110,10 @@ Esta aplicación fue desarrollada como proyecto final, implementando:
 - **Arquitectura escalable** cliente-servidor
 - **Mejores prácticas** de desarrollo web moderno
 
-## 🎯 Próximas Características
 
-- Integración con servicios de streaming externos
-- Sistema de playlists personalizadas
-- Modo offline para reproducción sin conexión
-- Estadísticas de escucha detalladas
-- Compartir música con otros usuarios
 
----
+## Integrantes de el proyecto
 
-## 📞 Soporte
-
-Si encuentras algún problema o necesitas ayuda, no dudes en contactarnos.
+ANDRES MAURICIO MUÑOZ RINCON --- EDUARD CRIOLLO YULE
 
 **¡Disfruta de tu experiencia musical! 🎵**
